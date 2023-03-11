@@ -1,2 +1,2 @@
 # What is this project about?
-Web scrapping app storing data in sql db using oops.
+Student database desktop app using mysql and PyQt.
