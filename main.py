@@ -6,8 +6,7 @@ from PyQt6.QtGui import QAction,QIcon
 import sys
 import sqlite3
 
-# commit: add status-bar edit delete on select Sec47
-# commit: tool,status,edit,delete,about menu impl Sec47
+# commit: implemented status-bar edit functions Sec47
 
 # QMainWindow provides menu bar status bar and stuff!!!
 class MainWindow(QMainWindow):
@@ -108,8 +107,67 @@ class MainWindow(QMainWindow):
 
 
 class EditDialog(QDialog):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
+        self.setWindowTitle('Update Student Data')
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout=QVBoxLayout() # simple vertical layout
+
+        # get student name from selected row
+        index=main_window.table.currentRow() # get selected row index
+        student_name=main_window.table.item(index,1).text() # get row of table and 2nd col ie. name
+
+        # get id from selected row
+        self.student_id=main_window.table.item(index,0).text()
+
+        # Add student name widget
+        self.student_name=QLineEdit(student_name)
+        self.student_name.setPlaceholderText('Name')
+        layout.addWidget(self.student_name)
+
+        # get course from selected row
+        course_name=main_window.table.item(index,2).text()
+
+        # Add courses combobox
+        self.course_name=QComboBox()
+        courses=['Biology','Math','Astronomy','Physics']
+        self.course_name.addItems(courses)
+        self.course_name.setCurrentText(course_name) # set course got from the table
+        layout.addWidget(self.course_name)
+
+        # get mobile from selected row
+        mobile=main_window.table.item(index,3).text()
+
+        # Add mobile Widget
+        self.mobile=QLineEdit(mobile)
+        self.mobile.setPlaceholderText('Name')
+        layout.addWidget(self.mobile)
+
+        # Add submit button
+        button=QPushButton('Update')
+        button.clicked.connect(self.update_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+
+    def update_student(self):
+        connection=sqlite3.connect('database.db')
+        cursor=connection.cursor()
+        cursor.execute('UPDATE students SET name = ?, course = ?, mobile = ? WHERE id = ?',
+                       (self.student_name.text(),
+                        self.course_name.itemText(self.course_name.currentIndex()),
+                        self.mobile.text(),
+                        self.student_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        # refresh table
+        main_window.load_data() 
+
+
 
 class DeleteDialog(QDialog):
     def __init__(self) -> None:
