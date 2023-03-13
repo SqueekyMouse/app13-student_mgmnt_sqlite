@@ -1,8 +1,10 @@
 from PyQt6.QtWidgets import QApplication, QLabel,QWidget,QGridLayout,\
-    QLineEdit,QPushButton,QMainWindow,QTableWidget
+    QLineEdit,QPushButton,QMainWindow,QTableWidget,QTableWidgetItem
 from PyQt6.QtGui import QAction
 import sys
-# commit: add table to main window Sec46
+import sqlite3
+
+# commit: add data to table from sql Sec46
 
 #QMainWindow provides menu bar status bar and stuff!!!
 class MainWindow(QMainWindow):
@@ -24,12 +26,27 @@ class MainWindow(QMainWindow):
         self.table=QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(('Id','Name','Course','Mobile'))
+        self.table.verticalHeader().setVisible(False) # hide the table id coumn!!!
         self.setCentralWidget(self.table)
         
 
     def load_data(self):
-        # self.table
-        pass
+        connection=sqlite3.connect('database.db')
+        result=connection.execute('SELECT * FROM students') # its a cursor obj!!!
+        # print(list(result)) # list of tuple [(1, 'John Smith', 'Math', 49111222333), ...
+        # for id,name,course,phone in list(result):
+        #     print(id,name,course,phone)
+
+        self.table.setRowCount(0) # to reset the table so rows are not duplicated when resizing window etc.!!!
+        for row_num,row_data in enumerate(result):
+            self.table.insertRow(row_num)
+            for colum_num,data in enumerate(row_data):
+                print(row_data)
+                self.table.setItem(row_num,colum_num,QTableWidgetItem(str(data)))
+        connection.close()
+
+
+        
 
 
 
@@ -37,4 +54,5 @@ class MainWindow(QMainWindow):
 app=QApplication(sys.argv)
 age_calculator=MainWindow()
 age_calculator.show()
+age_calculator.load_data()
 sys.exit(app.exec())
