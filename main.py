@@ -6,7 +6,7 @@ from PyQt6.QtGui import QAction,QIcon
 import sys
 import sqlite3
 
-# commit: implemented status-bar delete functions Sec47
+# commit: add status-bar edit confirmation Sec47
 
 # QMainWindow provides menu bar status bar and stuff!!!
 class MainWindow(QMainWindow):
@@ -17,8 +17,8 @@ class MainWindow(QMainWindow):
 
         # menu items
         file_menu_item=self.menuBar().addMenu('&File')
-        help_menu_item=self.menuBar().addMenu('&Help')
         edit_menu_item=self.menuBar().addMenu('&Edit')
+        help_menu_item=self.menuBar().addMenu('&Help')
 
         add_student_action=QAction(QIcon('icons/add.png'),'Add Student',self)
         add_student_action.triggered.connect(self.insert) # mention the method to conncet it to 
@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         about_action=QAction('About',self)
         help_menu_item.addAction(about_action)
         # about_action.setMenuRole(QAction.MenuRole.NoRole) # needed on mac if help menu is not shown!!!
+        about_action.triggered.connect(self.about)
 
         search_action=QAction(QIcon('icons/search.png'),'Search',self)
         search_action.triggered.connect(self.search)
@@ -63,7 +64,7 @@ class MainWindow(QMainWindow):
         delete_button.clicked.connect(self.delete)
 
         children=self.findChildren(QPushButton)
-        print(children)
+        # print(children)
         if children:
             for child in children:
                 self.statusbar.removeWidget(child)
@@ -103,6 +104,23 @@ class MainWindow(QMainWindow):
     def search(self):
         dialog=SearchDialog()
         dialog.exec()
+
+    def about(self):
+        dialog=AboutDialog()
+        dialog.exec()
+
+
+
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('About')
+        content='''
+        This app was created during the course:
+          "The Python Mega Course".
+        Feel free to modify and reuse this app.
+        '''
+        self.setText(content)
 
 
 
@@ -160,6 +178,13 @@ class EditDialog(QDialog):
         # refresh table
         main_window.load_data() 
 
+        # close edit window and show confirmation message
+        self.close()
+        confirm_widget=QMessageBox()
+        confirm_widget.setWindowTitle('Success')
+        confirm_widget.setText('This record was updated!')
+        confirm_widget.exec()
+
 
 
 class DeleteDialog(QDialog):
@@ -205,9 +230,6 @@ class DeleteDialog(QDialog):
 
     def close_dialog(self):
         self.close()
-
-
-
 
 
 
@@ -257,6 +279,8 @@ class InsertDialog(QDialog):
         connection.close()
         main_window.load_data()
 
+
+
 class SearchDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -293,6 +317,7 @@ class SearchDialog(QDialog):
 
         # cursor.close()
         # connection.close()
+
 
 
 app=QApplication(sys.argv)
