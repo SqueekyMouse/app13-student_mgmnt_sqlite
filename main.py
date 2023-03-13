@@ -112,23 +112,19 @@ class EditDialog(QDialog):
         self.setWindowTitle('Update Student Data')
         self.setFixedWidth(300)
         self.setFixedHeight(300)
-
         layout=QVBoxLayout() # simple vertical layout
 
-        # get student name from selected row
+        # get student details from selected table row
         index=main_window.table.currentRow() # get selected row index
         student_name=main_window.table.item(index,1).text() # get row of table and 2nd col ie. name
-
-        # get id from selected row
-        self.student_id=main_window.table.item(index,0).text()
+        self.student_id=main_window.table.item(index,0).text() # get id from selected row
+        course_name=main_window.table.item(index,2).text() # get course from selected row
+        mobile=main_window.table.item(index,3).text() # get mobile from selected row
 
         # Add student name widget
         self.student_name=QLineEdit(student_name)
         self.student_name.setPlaceholderText('Name')
         layout.addWidget(self.student_name)
-
-        # get course from selected row
-        course_name=main_window.table.item(index,2).text()
 
         # Add courses combobox
         self.course_name=QComboBox()
@@ -136,9 +132,6 @@ class EditDialog(QDialog):
         self.course_name.addItems(courses)
         self.course_name.setCurrentText(course_name) # set course got from the table
         layout.addWidget(self.course_name)
-
-        # get mobile from selected row
-        mobile=main_window.table.item(index,3).text()
 
         # Add mobile Widget
         self.mobile=QLineEdit(mobile)
