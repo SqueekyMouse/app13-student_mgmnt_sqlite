@@ -1,12 +1,12 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QLabel,QWidget,QGridLayout,\
     QLineEdit,QPushButton,QMainWindow,QTableWidget,QTableWidgetItem,\
-    QDialog,QVBoxLayout,QComboBox,QToolBar,QStatusBar
+    QDialog,QVBoxLayout,QComboBox,QToolBar,QStatusBar,QMessageBox
 from PyQt6.QtGui import QAction,QIcon
 import sys
 import sqlite3
 
-# commit: implemented status-bar edit functions Sec47
+# commit: implemented status-bar delete functions Sec47
 
 # QMainWindow provides menu bar status bar and stuff!!!
 class MainWindow(QMainWindow):
@@ -165,6 +165,49 @@ class EditDialog(QDialog):
 class DeleteDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
+        self.setWindowTitle('Delete Student Data')
+        self.setFixedSize(300,100)
+        layout=QGridLayout()
+        confirmation=QLabel('Are you sure you want to delete?')
+        yes=QPushButton('Yes')
+        no=QPushButton('No')
+
+        layout.addWidget(confirmation,0,0,1,2)
+        layout.addWidget(yes,1,0)
+        layout.addWidget(no,1,1)
+        
+        self.setLayout(layout)
+
+        yes.clicked.connect(self.delete_student)
+        no.clicked.connect(self.close_dialog)
+
+
+    def delete_student(self):
+        # get index and student id for selected table row
+        index=main_window.table.currentRow()
+        student_id=main_window.table.item(index,0).text()
+
+        connection=sqlite3.connect('database.db')
+        cursor=connection.cursor()
+        cursor.execute('DELETE from students WHERE id = ?',(student_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        main_window.load_data()
+
+        self.close()
+
+        # to show a simple notofocation dialog box
+        confirmation_widget=QMessageBox() # this child of qdialog
+        confirmation_widget.setWindowTitle('Success')
+        confirmation_widget.setText('This record was deleted successfully!')
+        confirmation_widget.exec()
+
+    def close_dialog(self):
+        self.close()
+
+
+
 
 
 
