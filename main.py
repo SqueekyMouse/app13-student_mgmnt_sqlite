@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QApplication, QLabel,QWidget,QGridLayout,\
-    QLineEdit,QPushButton,QMainWindow
+    QLineEdit,QPushButton,QMainWindow,QTableWidget
 from PyQt6.QtGui import QAction
 import sys
-# commit: PyQt main window and menubar Sec46
+# commit: add table to main window Sec46
 
 #QMainWindow provides menu bar status bar and stuff!!!
 class MainWindow(QMainWindow):
@@ -20,6 +20,16 @@ class MainWindow(QMainWindow):
         about_action=QAction('About',self)
         help_menu_item.addAction(about_action)
         # about_action.setMenuRole(QAction.MenuRole.NoRole) # needed on mac if help menu is not shown!!!
+
+        self.table=QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(('Id','Name','Course','Mobile'))
+        self.setCentralWidget(self.table)
+        
+
+    def load_data(self):
+        # self.table
+        pass
 
 
 
