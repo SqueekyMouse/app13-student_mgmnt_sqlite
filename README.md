@@ -1,2 +1,2 @@
 # What is this project about?
-Student database desktop app using mysql and PyQt.
+Student database desktop app using sqlite and PyQt.

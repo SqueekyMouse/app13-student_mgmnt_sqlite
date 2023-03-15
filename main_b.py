@@ -6,7 +6,7 @@ from PyQt6.QtGui import QAction,QIcon
 import sys
 import sqlite3
 
-# commit: refactoring: mysql Sec48
+# commit: refactoring db class for db connection Sec47
 
 # refactoring: database class for db connection
 class DatabaseConnection:
